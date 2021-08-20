@@ -2,7 +2,11 @@
 
 namespace App\Pix;
 
-class Api {
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+
+class Api
+{
 
     /**
      * URL base do PSP
@@ -23,31 +27,31 @@ class Api {
     private $clientSecret;
 
     /**
-     * Caminho absoluto até o arquivo do certificado
-     * @var string
-     */
-    private $certificate;
-
-    /**
-     * Caminho absoluto até o arquivo do certificado
+     * URL de Callback
      * @var string
      */
     private $redirectUri;
 
     /**
+     * Token do APP
+     * @var string
+     */
+    private $tokenApp;
+
+    /**
      * @param string $baseUrl
      * @param string $clientId
      * @param string $clientSecret
-     * @param string $certificate
      * @param string $redirectUri
+     * @param string $tokenApp
      */
-    public function __construct($baseUrl, $clientId, $clientSecret, $certificate, $redirectUri)
+    public function __construct($baseUrl, $clientId, $clientSecret, $redirectUri, $tokenApp)
     {
         $this->baseUrl = $baseUrl;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->certificate = $certificate;
         $this->redirectUri = $redirectUri;
+        $this->tokenApp = $tokenApp;
     }
 
     /**
@@ -58,7 +62,7 @@ class Api {
      */
     public function createCob($txid, $request)
     {
-        return $this->send('PUT', '/v2/cob/'.$txid,$request);
+        return $this->send('PUT', '/pix-bb/v1/' . $txid, $request);
     }
 
     /**
@@ -68,49 +72,33 @@ class Api {
      */
     public function consultaCob($txid)
     {
-        return $this->send('GET', '/pix-bb/v1/'.$txid);
-        print_r($this->send());
+        return $this->send('GET', '/pix-bb/v1/' . $txid);
     }
 
     /**
      * Método responsável por obter o token de acesso às APIs Pix
-     * @return string
+     * @return resource
+     * @throws GuzzleException
      */
     private function getAccessToken()
     {
         // ENDPOINT COMPLETO
-        $endpoint = $this->baseUrl.'/oauth/token';
+        $endpoint = 'oauth/token';
 
-        // CORPO DA REQUISICAO
-        $headers = [
-            'Authorization' => 'Basic '.$this->clientId.$this->clientSecret,
-            'Content-Type' => 'application/json'
-        ];
-
-        // CORPO DA REQUISICAO
-        $request = [
-            'gran_type' => 'authorization_code',
-            'code' => '',
-            'redirect_uri' => $this->redirectUri
-        ];
-
-        // CONFIGURAÇÃO DO CURL
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL             => $endpoint,
-            CURLOPT_USERPWD         => $this->clientId.':'.$this->clientSecret,
-            CURLOPT_HTTPAUTH        => CURLAUTH_BASIC,
-            CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_CUSTOMREQUEST   => 'POST',
-            CURLOPT_POSTFIELDS      => json_encode($request),
-            CURLOPT_SSLCERT         => $this->certificate,
-            CURLOPT_SSLCERTPASSWD   => '',
-            CURLOPT_HTTPHEADER      => $headers
+        // CONFIGURAÇÃO O CLIENT
+        $client = new Client([
+            'base_uri' => $this->baseUrl,
         ]);
 
-        //EXECUTA O CURL
-        $response = curl_exec($curl);
-        curl_close($curl);
+        // EXECUTA O CLIENT
+        $response = $client->request('POST', $endpoint, [
+            'headers' => [
+                'Authorization' => 'Basic ' . $this->tokenApp,
+            ],
+            'form_params' => [
+                'grant_type' => 'client_credentials'
+            ]
+        ])->getBody()->getContents();
 
         // RESPONSE EM ARRAY
         $responseArray = json_decode($response, true);
@@ -129,27 +117,26 @@ class Api {
     public function send($method, $resource, $request = [])
     {
         //ENDPOINT COMPLETO
-        $endpoint = $this->baseUrl.$resource;
+        $endpoint = $this->baseUrl . $resource;
 
         //HEADERS
         $headers = [
-          'Cache-Control: no-cache',
-          'Content-type: application/json',
-          'Authorization: Bearer'.$this->getAccessToken()
+            'Cache-Control: no-cache',
+            'Content-type: application/json',
+            'Authorization: Bearer' . $this->getAccessToken()
         ];
 
         // CONFIGURAÇÃO DO CURL
         $curl = curl_init();
         curl_setopt_array($curl, [
-            CURLOPT_URL             => $endpoint,
-            CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_CUSTOMREQUEST   => $method,
-            CURLOPT_SSLCERT         => $this->certificate,
-            CURLOPT_SSLCERTPASSWD   => '',
-            CURLOPT_HTTPHEADER      => $headers
+            CURLOPT_URL => $endpoint,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_SSLCERTPASSWD => '',
+            CURLOPT_HTTPHEADER => $headers
         ]);
 
-        switch ($method){
+        switch ($method) {
             case 'POST':
             case 'PUT':
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($request));

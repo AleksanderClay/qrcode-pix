@@ -7,27 +7,34 @@
     use Mpdf\QrCode\QrCode;
     use Mpdf\QrCode\Output;
 
-    $obApiPix = new Api('https://api.hm.bb.com.br',
-        'eyJpZCI6IjQzMWYiLCJjb2RpZ29QdWJsaWNhZG9yIjowLCJjb2RpZ29Tb2Z0d2FyZSI6MjA4MDcsInNlcXVlbmNpYWxJbnN0YWxhY2FvIjoxfQ',
-        'eyJpZCI6IjUyZDhhYTYtNTVmNi00MDFmIiwiY29kaWdvUHVibGljYWRvciI6MCwiY29kaWdvU29mdHdhcmUiOjIwODA3LCJzZXF1ZW5jaWFsSW5zdGFsYWNhbyI6MSwic2VxdWVuY2lhbENyZWRlbmNpYWwiOjEsImFtYmllbnRlIjoiaG9tb2xvZ2FjYW8iLCJpYXQiOjE2MjkxMzkxNzE2NjB9',
-        '',
-        'https://www.janelaunica.com.br/retorno-pix'
+    $obApiPix = new Api('https://oauth.hm.bb.com.br',
+        ''.getenv('CLIENT_ID'),
+        ''.getenv('CLIENT_SECRET'),
+        'https://www.janelaunica.com.br/retorno-pix',
+        ''.getenv('APP_KEY')
     );
 
     $request = [
-        'calendario' => [
-            'expiracao' => 3600
-        ],
-        'devedor' => [
-            'cnpj' => "12345678000195",
-            'nome' => "Empresa de Serviços SA"
-        ],
-        'valor' => [
-            'original' => "37.00",
-          ],
-        'chave' => "01141107279",
-        'solicitacaoPagador' => "Serviço realizado.",
-        ];
+          "numeroConvenio" => 62191,
+          "indicadorCodigoBarras" => "S",
+          "codigoGuiaRecebimento" => "83660000000199800053846101173758000000000000",
+          "emailDevedor"=> "contribuinte.silva@provedor.com.br",
+          "codigoPaisTelefoneDevedor" => 55,
+          "dddTelefoneDevedor" => 61,
+          "numeroTelefoneDevedor" => "999731240",
+          "codigoSolicitacaoBancoCentralBrasil" => "88a33759-78b0-43b7-8c60-e5e3e7cb55fe",
+          "descricaoSolicitacaoPagamento" => "Arrecadação Pix",
+          "valorOriginalSolicitacao" => 19.98,
+          "cpfDevedor" => "19917885250",
+          "nomeDevedor" => "Contribuinte da Silva",
+          "quantidadeSegundoExpiracao" => 3600,
+          "listaInformacaoAdicional" => [
+            [
+              "codigoInformacaoAdicional"=> "IPTU",
+              "textoInformacaoAdicional"=> "COTA ÚNICA 2021"
+            ]
+          ]
+    ];
 
     $response = $obApiPix->createCob('ALEK1478523699874563210458', $request);
 
@@ -67,5 +74,5 @@
     <br/><br/>
 
     Código Pix: <br/>
-    <strong><?=$payloadQrCode?></strong>
+    <strong><?= $payloadQrCode ?></strong>
 

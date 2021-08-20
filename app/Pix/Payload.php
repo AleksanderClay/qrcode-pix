@@ -2,7 +2,8 @@
 
 namespace App\Pix;
 
-class Payload {
+class Payload
+{
     /**
      * IDs do Payload do Pix
      * @var string
@@ -82,7 +83,7 @@ class Payload {
         return $this;
     }
 
-     /**
+    /**
      * Método responsável por definir o valor da $description
      * @param string $description
      */
@@ -132,7 +133,7 @@ class Payload {
         return $this;
     }
 
-     /**
+    /**
      * Método responsável por definir o valor da $txId
      * @param string $txId
      */
@@ -142,13 +143,13 @@ class Payload {
         return $this;
     }
 
-     /**
+    /**
      * Método responsável por definir o valor da $amount
      * @param float $amount
      */
     public function setAmount($amount)
     {
-        $this->amount = (string)number_format($amount, 2, ',','');
+        $this->amount = (string)number_format($amount, 2, ',', '');
         return $this;
     }
 
@@ -160,9 +161,9 @@ class Payload {
      */
     public function getValue($id, $value)
     {
-        $size = str_pad(strlen($value),2,'0', STR_PAD_LEFT);
+        $size = str_pad(strlen($value), 2, '0', STR_PAD_LEFT);
 
-        return $id.$size.$value;
+        return $id . $size . $value;
     }
 
     /**
@@ -184,7 +185,7 @@ class Payload {
         $url = strlen($this->url) ? $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION_URL, $this->url) : '';
 
         // VALOR COMPLETO DA CONTA
-        return $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION, $gui.$key.$description.$url);
+        return $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION, $gui . $key . $description . $url);
     }
 
     /**
@@ -193,7 +194,7 @@ class Payload {
     private function getAdditionalDataFieldTemplate()
     {
         //TXID
-        $txid= $this->getValue(self::ID_ADDITIONAL_DATA_FIELD_TEMPLATE_TXID, $this->txId);
+        $txid = $this->getValue(self::ID_ADDITIONAL_DATA_FIELD_TEMPLATE_TXID, $this->txId);
 
         // RETORNA O VALOR COMPLETO
         return $this->getValue(self::ID_ADDITIONAL_DATA_FIELD_TEMPLATE, $txid);
@@ -208,26 +209,26 @@ class Payload {
         return $this->uniquePayment ? $this->getValue(self::ID_POINT_OF_INITIATION_METHOD, '12') : '';
     }
 
-     /**
+    /**
      * Método responsável por gerar o código completo do Payload Pix
      * @return string
      */
     public function getPayload()
     {
         //CRIA PAYLOAD
-        $payload = $this->getValue(self::ID_PAYLOAD_FORMAT_INDICATOR, '01').
-                   $this->getUniquePayment().
-                   $this->getMerchantAccountInformation().
-                   $this->getValue(self::ID_MERCHANT_CATEGORY_CODE, '0000').
-                   $this->getValue(self::ID_TRANSACTION_CURRENCY, '986').
-                   $this->getValue(self::ID_TRANSACTION_AMOUNT,'100.00').
-                   $this->getValue(self::ID_COUNTRY_CODE, 'BR').
-                   $this->getValue(self::ID_MERCHANT_NAME, $this->merchantName).
-                   $this->getValue(self::ID_MERCHANT_CITY, $this->merchantCity).
-                   $this->getAdditionalDataFieldTemplate();
+        $payload = $this->getValue(self::ID_PAYLOAD_FORMAT_INDICATOR, '01') .
+            $this->getUniquePayment() .
+            $this->getMerchantAccountInformation() .
+            $this->getValue(self::ID_MERCHANT_CATEGORY_CODE, '0000') .
+            $this->getValue(self::ID_TRANSACTION_CURRENCY, '986') .
+            $this->getValue(self::ID_TRANSACTION_AMOUNT, '100.00') .
+            $this->getValue(self::ID_COUNTRY_CODE, 'BR') .
+            $this->getValue(self::ID_MERCHANT_NAME, $this->merchantName) .
+            $this->getValue(self::ID_MERCHANT_CITY, $this->merchantCity) .
+            $this->getAdditionalDataFieldTemplate();
 
         //RETORNA O PAYLOAD + CRC16
-        return $payload.$this->getCRC16($payload);
+        return $payload . $this->getCRC16($payload);
     }
 
     /**
@@ -237,7 +238,7 @@ class Payload {
     private function getCRC16($payload)
     {
         //ADICIONA DADOS GERAIS NO PAYLOAD
-        $payload .= self::ID_CRC16.'04';
+        $payload .= self::ID_CRC16 . '04';
 
         //DADOS DEFINIDOS PELO BACEN
         $polinomio = 0x1021;
@@ -255,9 +256,8 @@ class Payload {
         }
 
         //RETORNA CÓDIGO CRC16 DE 4 CARACTERES
-        return self::ID_CRC16.'04'.strtoupper(dechex($resultado));
+        return self::ID_CRC16 . '04' . strtoupper(dechex($resultado));
     }
-
 
 
 }

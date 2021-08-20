@@ -1,10 +1,10 @@
 <?php
 
-    require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
-    use \App\Pix\Payload;
-    use Mpdf\QrCode\QrCode;
-    use Mpdf\QrCode\Output;
+use \App\Pix\Payload;
+use Mpdf\QrCode\QrCode;
+use Mpdf\QrCode\Output;
 
     // INSTANCIA PRINCIPAL DO PAYLOAD PIX
     $obPayload = (new Payload)
@@ -24,15 +24,15 @@
     // IMAGEM DO QR CODE
     $image = (new Output\Png)->output($obQrCode, 400);
 
-?>
+    ?>
 
     <h1>Qr Code Pix</h1>
 
     <br/>
 
-    <img src="data:image/png;base64, <?=base64_encode($image)?>" alt="">
+    <img src="data:image/png;base64, <?= base64_encode($image) ?>" alt="">
 
     <br/><br/>
 
     Código Pix: <br/>
-    <strong><?=$payloadQrCode?></strong>
+    <strong><?= $payloadQrCode ?></strong>
