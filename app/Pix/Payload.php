@@ -176,7 +176,7 @@ class Payload
         $gui = $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION_GUI, 'br.gov.bcb.pix');
 
         // CHAVE PIX
-        $key = strlen($key) ? $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION_KEY, $this->pixKey) : '';
+        $pixKey = strlen($this->pixKey) ? $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION_KEY, $this->pixKey) : '';
 
         // DESCRIÇÃO DO PAGAMENTO
         $description = strlen($this->description) ? $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION_DESCRIPTION, $this->description) : '';
@@ -185,7 +185,7 @@ class Payload
         $url = strlen($this->url) ? $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION_URL, $this->url) : '';
 
         // VALOR COMPLETO DA CONTA
-        return $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION, $gui . $key . $description . $url);
+        return $this->getValue(self::ID_MERCHANT_ACCOUNT_INFORMATION, $gui . $pixKey . $description . $url);
     }
 
     /**

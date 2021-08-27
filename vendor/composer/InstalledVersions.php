@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'baf900479e4f8cb4b64d4a35f024f36260edd9ab',
+    'reference' => '930072d9df6c6f1ed80a4139bb935fb3f74844b9',
     'name' => 'qrcode/pix',
   ),
   'versions' => 
@@ -153,7 +153,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'baf900479e4f8cb4b64d4a35f024f36260edd9ab',
+      'reference' => '930072d9df6c6f1ed80a4139bb935fb3f74844b9',
     ),
     'ralouphie/getallheaders' => 
     array (
