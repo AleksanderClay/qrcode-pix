@@ -12,7 +12,7 @@ class Api
      * URL base do PSP
      * @var string
      */
-    private $baseUrl;
+    private  $baseUrl;
 
     /**
      * Client ID do oAuth2 do PSP
@@ -33,36 +33,44 @@ class Api
     private $redirectUri;
 
     /**
-     * Token do APP
+     * Token Basic
      * @var string
      */
-    private $tokenApp;
+    private $tokenBasic;
+
+    /**
+     * Developer Application Key
+     * @var string
+     */
+    private $appKey;
 
     /**
      * @param string $baseUrl
      * @param string $clientId
      * @param string $clientSecret
      * @param string $redirectUri
-     * @param string $tokenApp
+     * @param string $tokenBasic
+     * @param string $appKey
      */
-    public function __construct($baseUrl, $clientId, $clientSecret, $redirectUri, $tokenApp)
+    public function __construct($baseUrl, $clientId, $clientSecret, $redirectUri, $tokenBasic, $appKey)
     {
         $this->baseUrl = $baseUrl;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUri = $redirectUri;
-        $this->tokenApp = $tokenApp;
+        $this->tokenBasic = $tokenBasic;
+        $this->appKey = $appKey;
     }
 
     /**
      * Método Responsável por criar uma cobrança imediata
-     * @param $txid
      * @param $request
      * @return array
+     * @throws GuzzleException
      */
-    public function createCob($txid, $request)
+    public function createCob($request)
     {
-        return $this->send('PUT', '/pix-bb/v1/' . $txid, $request);
+        return $this->send($request);
     }
 
     /**
@@ -77,7 +85,7 @@ class Api
 
     /**
      * Método responsável por obter o token de acesso às APIs Pix
-     * @return resource
+     * @return void
      * @throws GuzzleException
      */
     private function getAccessToken()
@@ -93,7 +101,7 @@ class Api
         // EXECUTA O CLIENT
         $response = $client->request('POST', $endpoint, [
             'headers' => [
-                'Authorization' => 'Basic ' . $this->tokenApp,
+                'Authorization' => 'Basic ' . $this->tokenBasic,
             ],
             'form_params' => [
                 'grant_type' => 'client_credentials'
@@ -104,8 +112,9 @@ class Api
         $responseArray = json_decode($response, true);
 
         // RETORNA O ACESS TOKEN
-        return isset($responseArray['acess_token']) ? $responseArray['acess_token'] : '';
+        return isset($responseArray['access_token']) ? $responseArray['access_token'] : '';
     }
+
 
     /**
      * Método responsável por enviar requisição para a PSP
@@ -113,39 +122,33 @@ class Api
      * @param string $resource
      * @param array $request
      * @return array
+     * @throws GuzzleException
      */
-    public function send($method, $resource, $request = [])
+    public function send( $request = [])
     {
-        //ENDPOINT COMPLETO
-        $endpoint = $this->baseUrl . $resource;
+        $url = 'https://api.hm.bb.com.br';
 
-        //HEADERS
-        $headers = [
-            'Cache-Control: no-cache',
-            'Content-type: application/json',
-            'Authorization: Bearer' . $this->getAccessToken()
-        ];
+        $endpoint = 'pix-bb/v1/arrecadacao-qrcodes';
 
-        // CONFIGURAÇÃO DO CURL
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $endpoint,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_SSLCERTPASSWD => '',
-            CURLOPT_HTTPHEADER => $headers
+        // CONFIGURAÇÃO O CLIENT
+        $client = new Client([
+            'base_uri' => $url,
         ]);
 
-        switch ($method) {
-            case 'POST':
-            case 'PUT':
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($request));
-                break;
-        }
+        // EXECUTA O CLIENT
+        $response = $client->request('POST', $endpoint, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->getAccessToken(),
+            ],
+            'query' => [
+                'gw-dev-app-key' => $this->appKey,
+            ],
+            'request-body' => [
+                'content-type' => 'application/json',
+                json_encode($request)
+            ]
 
-        //EXECUTA O CURL
-        $response = curl_exec($curl);
-        curl_close($curl);
+        ]);
 
         // RETORNA ARRAY DA RESPOSTA
         return json_decode($response, true);

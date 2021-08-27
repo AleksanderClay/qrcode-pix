@@ -1,28 +1,29 @@
 <?php
+require 'bootstrap.php';
 
-    require __DIR__ . '/vendor/autoload.php';
+use \App\Pix\Api;
+use \App\Pix\Payload;
+use Mpdf\QrCode\QrCode;
+use Mpdf\QrCode\Output;
 
-    use \App\Pix\Api;
-    use \App\Pix\Payload;
-    use Mpdf\QrCode\QrCode;
-    use Mpdf\QrCode\Output;
-
-    $obApiPix = new Api('https://oauth.hm.bb.com.br',
-        ''.getenv('CLIENT_ID'),
-        ''.getenv('CLIENT_SECRET'),
-        'https://www.janelaunica.com.br/retorno-pix',
-        ''.getenv('APP_KEY')
+    $obApiPix = new Api(
+            'https://oauth.hm.bb.com.br',
+            ''.$_ENV['CLIENT_ID'],
+            ''.$_ENV['CLIENT_SECRET'],
+            'https://www.janelaunica.com.br/retorno-pix',
+            ''.$_ENV['TOKEN_BASIC'],
+            ''.$_ENV['APP_KEY']
     );
 
     $request = [
-          "numeroConvenio" => 62191,
+          "numeroConvenio" => 763403,
           "indicadorCodigoBarras" => "S",
-          "codigoGuiaRecebimento" => "83660000000199800053846101173758000000000000",
+          "codigoGuiaRecebimento" => "81690000000000134302021082600000000005058809",
           "emailDevedor"=> "contribuinte.silva@provedor.com.br",
           "codigoPaisTelefoneDevedor" => 55,
           "dddTelefoneDevedor" => 61,
           "numeroTelefoneDevedor" => "999731240",
-          "codigoSolicitacaoBancoCentralBrasil" => "88a33759-78b0-43b7-8c60-e5e3e7cb55fe",
+          "codigoSolicitacaoBancoCentralBrasil" => "04876447000180",
           "descricaoSolicitacaoPagamento" => "Arrecadação Pix",
           "valorOriginalSolicitacao" => 19.98,
           "cpfDevedor" => "19917885250",
@@ -36,7 +37,7 @@
           ]
     ];
 
-    $response = $obApiPix->createCob('ALEK1478523699874563210458', $request);
+    $response = $obApiPix->createCob($request);
 
     if (!isset($response['location'])){
         echo "Problema ao gerar Pix";
