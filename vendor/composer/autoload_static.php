@@ -26,6 +26,7 @@ class ComposerStaticInitf307298ec1a55838e0510e1d6802b122
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Pix\\Sdk\\' => 8,
             'PhpOption\\' => 10,
         ),
         'M' => 
@@ -42,10 +43,6 @@ class ComposerStaticInitf307298ec1a55838e0510e1d6802b122
         'D' => 
         array (
             'Dotenv\\' => 7,
-        ),
-        'A' => 
-        array (
-            'App\\' => 4,
         ),
     );
 
@@ -64,12 +61,16 @@ class ComposerStaticInitf307298ec1a55838e0510e1d6802b122
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'Pix\\Sdk\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
         ),
         'PhpOption\\' => 
         array (
@@ -99,9 +100,15 @@ class ComposerStaticInitf307298ec1a55838e0510e1d6802b122
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
-        'App\\' => 
+    );
+
+    public static $prefixesPsr0 = array (
+        'C' => 
         array (
-            0 => __DIR__ . '/../..' . '/app',
+            'Curl' => 
+            array (
+                0 => __DIR__ . '/..' . '/curl/curl/src',
+            ),
         ),
     );
 
@@ -118,6 +125,7 @@ class ComposerStaticInitf307298ec1a55838e0510e1d6802b122
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitf307298ec1a55838e0510e1d6802b122::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitf307298ec1a55838e0510e1d6802b122::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitf307298ec1a55838e0510e1d6802b122::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitf307298ec1a55838e0510e1d6802b122::$classMap;
 
         }, null, ClassLoader::class);

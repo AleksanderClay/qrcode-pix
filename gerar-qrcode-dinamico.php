@@ -8,11 +8,11 @@ use Mpdf\QrCode\Output;
 
     $obApiPix = new Api(
             'https://oauth.hm.bb.com.br',
-            ''.$_ENV['CLIENT_ID'],
-            ''.$_ENV['CLIENT_SECRET'],
+            $_ENV['CLIENT_ID'],
+            $_ENV['CLIENT_SECRET'],
             'https://www.janelaunica.com.br/retorno-pix',
-            ''.$_ENV['TOKEN_BASIC'],
-            ''.$_ENV['APP_KEY']
+            $_ENV['TOKEN_BASIC'],
+            $_ENV['APP_KEY']
     );
 
     $request = [
