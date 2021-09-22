@@ -17,7 +17,7 @@ $request = [
     "descricaoSolicitacaoPagamento" => "Arrecadação Pix",
     "valorOriginalSolicitacao" => 0.01,
     "cpfDevedor" => "35530561268",
-    "nomeDevedor" => "MARIA DO SOCORRO DO NASCIMENTO MIRANDA",
+    "nomeDevedor" => "Denise Clay",
     "quantidadeSegundoExpiracao" => 3600,
     "listaInformacaoAdicional" => [
         [
